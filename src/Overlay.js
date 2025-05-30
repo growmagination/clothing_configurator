@@ -83,6 +83,38 @@ function Customizer() {
             </div>
           ))}
         </div>
+        <div style={{ marginTop: 30, width: 180 }}>
+          <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: 4 }}>Horizontal Position</label>
+          <input
+            type="range"
+            min={-1}
+            max={1}
+            step={0.01}
+            value={snap.decalPosition.x}
+            onChange={e => (state.decalPosition.x = parseFloat(e.target.value))}
+            style={{ width: '100%' }}
+          />
+          <label style={{ display: 'block', fontSize: '0.8rem', margin: '12px 0 4px 0' }}>Vertical Position</label>
+          <input
+            type="range"
+            min={-1}
+            max={1}
+            step={0.01}
+            value={snap.decalPosition.y}
+            onChange={e => (state.decalPosition.y = parseFloat(e.target.value))}
+            style={{ width: '100%' }}
+          />
+          <label style={{ display: 'block', fontSize: '0.8rem', margin: '12px 0 4px 0' }}>Scale</label>
+          <input
+            type="range"
+            min={0.05}
+            max={0.5}
+            step={0.01}
+            value={snap.decalScale}
+            onChange={e => (state.decalScale = parseFloat(e.target.value))}
+            style={{ width: '100%' }}
+          />
+        </div>
       </div>
       <button
         className="share"

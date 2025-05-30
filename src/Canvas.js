@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { useGLTF, useTexture, AccumulativeShadows, RandomizedLight, Decal, Environment, Center } from '@react-three/drei'
+import { useGLTF, useTexture, AccumulativeShadows, RandomizedLight, Decal, Environment, Center, RenderTexture, PerspectiveCamera, Text } from '@react-three/drei'
 import { easing } from 'maath'
 import { useSnapshot } from 'valtio'
 import { state } from './store'
@@ -54,7 +54,16 @@ function Shirt(props) {
   useFrame((state, delta) => easing.dampC(materials.lambert1.color, snap.color, 0.25, delta))
   return (
     <mesh castShadow geometry={nodes.T_Shirt_male.geometry} material={materials.lambert1} material-roughness={1} {...props} dispose={null}>
-      <Decal position={[0, 0.04, 0.15]} rotation={[0, 0, 0]} scale={0.15} map={texture} />
+      <Decal position={[snap.decalPosition.x, snap.decalPosition.y, 0.15]} rotation={[0, 0, 0]} scale={snap.decalScale}>
+      <meshStandardMaterial map={texture} roughness={1} transparent polygonOffset polygonOffsetFactor={-1}>
+          <RenderTexture>
+            <PerspectiveCamera makeDefault manual aspect={0.9 / 0.25} position={[0, 0, 5]} />
+            <color attach="background" args={['#af2040']} />
+            <ambientLight intensity={Math.PI} />
+            <directionalLight position={[10, 10, 5]} />
+          </RenderTexture>
+        </meshStandardMaterial>
+        </Decal>
     </mesh>
   )
 }
