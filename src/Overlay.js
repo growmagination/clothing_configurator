@@ -1,6 +1,5 @@
-import { Logo } from '@pmndrs/branding'
 import { motion, AnimatePresence } from 'framer-motion'
-import { AiFillCamera, AiOutlineArrowLeft, AiOutlineHighlight, AiOutlineShopping } from 'react-icons/ai'
+import { AiFillCamera, AiOutlineArrowLeft, AiOutlineHighlight, AiOutlineShopping, AiOutlineUpload } from 'react-icons/ai'
 import { useSnapshot } from 'valtio'
 import { state } from './store'
 
@@ -15,10 +14,7 @@ export function Overlay() {
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
       <motion.header initial={{ opacity: 0, y: -100 }} animate={{ opacity: 1, y: 0 }} transition={transition}>
-        <Logo width="40" height="40" />
-        <motion.div animate={{ x: snap.intro ? 0 : 100, opacity: snap.intro ? 1 : 0 }} transition={transition}>
-          <AiOutlineShopping size="3em" />
-        </motion.div>
+        <img src={snap.logo} alt="logo" width="200" height="auto" />
       </motion.header>
       <AnimatePresence>
         {snap.intro ? (
@@ -68,6 +64,25 @@ export function Overlay() {
 
 function Customizer() {
   const snap = useSnapshot(state)
+  // Handler for file upload
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0]
+    if (file && (file.type === 'image/png' || file.type === 'image/webp')) {
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        const img = new window.Image()
+        img.onload = () => {
+          state.customDecal = event.target.result
+          state.decal = 'custom'
+          state.customDecalAspect = img.width / img.height
+        }
+        img.src = event.target.result
+      }
+      reader.readAsDataURL(file)
+    } else {
+      alert('Please upload a PNG or WEBP file.')
+    }
+  }
   return (
     <div className="customizer">
       <div className="color-options">
@@ -82,6 +97,16 @@ function Customizer() {
               <img src={decal + '_thumb.png'} alt="brand" />
             </div>
           ))}
+          {/* Upload icon/button */}
+          <label className="decal upload" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+            <AiOutlineUpload size={24} />
+            <input
+              type="file"
+              accept="image/png, image/webp"
+              style={{ display: 'none' }}
+              onChange={handleFileUpload}
+            />
+          </label>
         </div>
         <div style={{ marginTop: 30, width: 180 }}>
           <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: 4 }}>Horizontal Position</label>
@@ -112,6 +137,16 @@ function Customizer() {
             step={0.01}
             value={snap.decalScale}
             onChange={e => (state.decalScale = parseFloat(e.target.value))}
+            style={{ width: '100%' }}
+          />
+          <label style={{ display: 'block', fontSize: '0.8rem', margin: '12px 0 4px 0' }}>Rotation</label>
+          <input
+            type="range"
+            min={-3.14}
+            max={3.14}
+            step={0.01}
+            value={snap.decalRotation}
+            onChange={e => (state.decalRotation = parseFloat(e.target.value))}
             style={{ width: '100%' }}
           />
         </div>

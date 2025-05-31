@@ -8,8 +8,8 @@
   "main": "src/index.js",
   "dependencies": {
     "@pmndrs/branding": "0.0.8",
-    "@react-three/drei": "^9.115.0",
-    "@react-three/fiber": "^8.17.10",
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
     "@types/three": "0.152.1",
     "framer-motion": "^10.0.1",
     "maath": "^0.6.0",
@@ -19,7 +19,7 @@
     "react-icons": "4.7.1",
     "react-scripts": "5.0.1",
     "three": "0.170.0",
-    "valtio": "^1.10.3"
+    "valtio": "^1.13.2"
   },
   "scripts": {
     "start": "react-scripts start",

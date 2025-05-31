@@ -4,6 +4,7 @@ import { useGLTF, useTexture, AccumulativeShadows, RandomizedLight, Decal, Envir
 import { easing } from 'maath'
 import { useSnapshot } from 'valtio'
 import { state } from './store'
+import * as THREE from 'three'
 
 export const App = ({ position = [0, 0, 2.5], fov = 25 }) => (
   <Canvas shadows camera={{ position, fov }} gl={{ preserveDrawingBuffer: true }} eventSource={document.getElementById('root')} eventPrefix="client">
@@ -49,21 +50,34 @@ function CameraRig({ children }) {
 
 function Shirt(props) {
   const snap = useSnapshot(state)
-  const texture = useTexture(`/${snap.decal}.png`)
+  const texture = snap.decal === 'custom' && snap.customDecal
+    ? useTexture({ map: snap.customDecal }).map
+    : useTexture(`/${snap.decal}.png`)
   const { nodes, materials } = useGLTF('/shirt_baked_collapsed.glb')
   useFrame((state, delta) => easing.dampC(materials.lambert1.color, snap.color, 0.25, delta))
+  let scale = [snap.decalScale, snap.decalScale, 0.2]
+  if (snap.decal === 'custom' && snap.customDecalAspect) {
+    if (snap.customDecalAspect >= 1) {
+      // Wider than tall: scale X by aspect, Y stays
+      scale = [snap.decalScale, snap.decalScale / snap.customDecalAspect, 0.2]
+    } else {
+      // Taller than wide: scale Y by 1/aspect, X stays
+      scale = [snap.decalScale * snap.customDecalAspect, snap.decalScale, 0.2]
+    }
+  }
+
   return (
     <mesh castShadow geometry={nodes.T_Shirt_male.geometry} material={materials.lambert1} material-roughness={1} {...props} dispose={null}>
-      <Decal position={[snap.decalPosition.x, snap.decalPosition.y, 0.15]} rotation={[0, 0, 0]} scale={snap.decalScale}>
-      <meshStandardMaterial map={texture} roughness={1} transparent polygonOffset polygonOffsetFactor={-1}>
-          <RenderTexture>
-            <PerspectiveCamera makeDefault manual aspect={0.9 / 0.25} position={[0, 0, 5]} />
-            <color attach="background" args={['#af2040']} />
-            <ambientLight intensity={Math.PI} />
-            <directionalLight position={[10, 10, 5]} />
-          </RenderTexture>
-        </meshStandardMaterial>
-        </Decal>
+      <Decal position={[snap.decalPosition.x, snap.decalPosition.y, 0.05]} rotation={[0, 0, snap.decalRotation]} scale={scale}>
+        <meshStandardMaterial
+          map={texture}
+          roughness={1}
+          opacity={0.85}
+          transparent
+          polygonOffset
+          polygonOffsetFactor={-1}
+        />
+      </Decal>
     </mesh>
   )
 }
