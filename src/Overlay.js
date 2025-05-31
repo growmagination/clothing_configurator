@@ -161,6 +161,10 @@ function Customizer() {
   const [scaleThumbActive, setScaleThumbActive] = useState(false)
   const [scaleThumbVisible, setScaleThumbVisible] = useState(false)
   const scaleFadeTimeout = useRef(null)
+  // State for position dot interaction
+  const [posDotActive, setPosDotActive] = useState(false)
+  const [posDotVisible, setPosDotVisible] = useState(false)
+  const posFadeTimeout = useRef(null)
 
   // Show/hide logic for rotation value (must be defined before use)
   const showRotationValue = () => {
@@ -183,6 +187,17 @@ function Customizer() {
     setScaleThumbActive(false)
     if (scaleFadeTimeout.current) clearTimeout(scaleFadeTimeout.current)
     setScaleThumbVisible(false)
+  }
+  // Show/hide logic for position value
+  const showPositionValue = () => {
+    if (posFadeTimeout.current) clearTimeout(posFadeTimeout.current)
+    setPosDotActive(true)
+    setPosDotVisible(true)
+  }
+  const hidePositionValue = () => {
+    setPosDotActive(false)
+    if (posFadeTimeout.current) clearTimeout(posFadeTimeout.current)
+    setPosDotVisible(false)
   }
 
   // Drag logic for scale
@@ -272,7 +287,7 @@ function Customizer() {
               userSelect: 'none',
               cursor: 'pointer',
               boxShadow: '0 2px 8px #0001',
-              overflow: 'hidden',
+              display: 'inline-block',
             }}
             onPointerDown={handleBoxPointerDown}
           >
@@ -316,7 +331,32 @@ function Customizer() {
                 zIndex: 2,
                 transition: 'background 0.2s',
               }}
+              onMouseEnter={showPositionValue}
+              onMouseLeave={hidePositionValue}
             />
+            {/* Show position value at right end when active */}
+            <span
+              style={{
+                position: 'absolute',
+                left: '100%',
+                top: '50%',
+                marginLeft: 12,
+                transform: 'translateY(-50%)',
+                fontWeight: 700,
+                color: '#222',
+                fontSize: 15,
+                background: 'none',
+                borderRadius: 6,
+                padding: '2px 10px',
+                pointerEvents: 'none',
+                zIndex: 3,
+                opacity: posDotVisible ? 1 : 0,
+                transition: 'opacity 0.3s',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {`(${snap.decalPosition.x.toFixed(2)}, ${snap.decalPosition.y.toFixed(2)})`}
+            </span>
           </div>
           <label style={{ display: 'block', fontSize: '0.8rem', margin: '12px 0 4px 0' }}>Scale</label>
           <div
