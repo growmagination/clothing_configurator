@@ -4,7 +4,6 @@ import { useGLTF, useTexture, AccumulativeShadows, RandomizedLight, Decal, Envir
 import { easing } from 'maath'
 import { useSnapshot } from 'valtio'
 import { state } from './store'
-import * as THREE from 'three'
 
 export const App = ({ position = [0, 0, 2.5], fov = 25 }) => (
   <Canvas shadows camera={{ position, fov }} gl={{ preserveDrawingBuffer: true }} eventSource={document.getElementById('root')} eventPrefix="client">
